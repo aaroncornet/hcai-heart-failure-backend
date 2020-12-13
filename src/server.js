@@ -22,6 +22,25 @@ app.use(bodyParser.json({
     type: 'application/vnd.api+json'
 }));
 
+app.use(function (req, res, next) {
+    let allowedOrigins = ['http://localhost:4200','https://hcai-heart-failure-frontend.herokuapp.com'];
+    let currentOrigin = req.headers.origin;
+    if(allowedOrigins.indexOf(currentOrigin) > -1) {
+        res.setHeader('Access-Control-Allow-Origin', currentOrigin);
+    }
+
+    //res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200 *');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, x-access-token ,content-type');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+
+    if(req.method === 'OPTIONS') {
+        res.sendStatus(200)
+    } else {
+        next();
+    }
+});
+
 app.use('/api/prediction',prediction_routes);
 
 // Postprocessing; catch all non-existing endpoint requests
